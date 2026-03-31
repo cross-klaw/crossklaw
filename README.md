@@ -1,12 +1,23 @@
-# CrossKlaw
+<p align="center">
+  <img src="docs/Graphics/Klawlogo.png" alt="CrossKlaw" width="200">
+</p>
 
-**One binary. Every channel. Your data.**
+<h1 align="center">CrossKlaw</h1>
 
-[![Watch the demo](https://img.shields.io/badge/Demo-Watch%20on%20YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/M2aZd5-E32A)
+<p align="center"><strong>One binary. Every channel. Your data.</strong></p>
+
+<p align="center">
+  <a href="https://youtu.be/M2aZd5-E32A"><img src="https://img.shields.io/badge/Demo-Watch%20on%20YouTube-red?style=for-the-badge&logo=youtube" alt="Watch the demo"></a>
+  <a href="https://github.com/cross-klaw/crossklaw/releases"><img src="https://img.shields.io/badge/Download-v0.2.0--beta-blue?style=for-the-badge" alt="Download"></a>
+</p>
 
 An agentic AI platform that runs as a single Go binary. Secure by default, useful offline, hardware-aware.
 
 CrossKlaw connects to 14 communication channels, orchestrates 11 LLM providers with intelligent routing and failover, controls IoT devices, and participates in multi-agent ecosystems via A2A and MCP — all from a ~46 MB self-contained binary with zero external dependencies. Runs on a Raspberry Pi.
+
+<p align="center">
+  <img src="Screenshots/dashboard.png" alt="CrossKlaw Dashboard" width="700">
+</p>
 
 ## Features
 
@@ -33,6 +44,10 @@ CrossKlaw connects to 14 communication channels, orchestrates 11 LLM providers w
 - **Cross-platform** — Linux (amd64/arm64), macOS (amd64/arm64), Windows (amd64)
 
 ## Quick Start
+
+<p align="center">
+  <img src="Screenshots/setup.png" alt="CrossKlaw Setup Wizard" width="700">
+</p>
 
 ### Download and Run
 
@@ -123,6 +138,10 @@ make build-all
 ```
 
 ## CLI Commands
+
+<p align="center">
+  <img src="Screenshots/chat.png" alt="CrossKlaw TUI Chat" width="700">
+</p>
 
 | Command | Description |
 |---|---|
@@ -367,6 +386,10 @@ crossklaw keys generate
 ```
 
 ## Security
+
+<p align="center">
+  <img src="Screenshots/security-approval.png" alt="CrossKlaw Security Approval" width="700">
+</p>
 
 CrossKlaw is pen tested against 22 automated security checks across 9 attack categories: prompt injection (including base64 and A2A vectors), request size attacks, authentication bypass, path traversal, information disclosure, method fuzzing, rate limiting, webhook injection, and MCP server abuse. Run the tests yourself: `bash tests/pentest.sh`
 
