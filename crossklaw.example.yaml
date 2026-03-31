@@ -1,0 +1,325 @@
+# CrossKlaw Configuration
+# Copy this to ~/.crossklaw/crossklaw.yaml (or run: crossklaw config init)
+# Environment variables override config values (prefix: CROSSKLAW_)
+
+# ---------------------------------------------------------------------------
+# Gateway — HTTP + WebSocket API server
+# ---------------------------------------------------------------------------
+gateway:
+  host: "127.0.0.1"        # Bind address (use 0.0.0.0 for Docker/remote access)
+  port: 18800               # API port
+
+# ---------------------------------------------------------------------------
+# Agent — Core AI assistant settings
+# ---------------------------------------------------------------------------
+agent:
+  name: "CrossKlaw"
+  identity: "You are CrossKlaw, a helpful personal AI assistant."
+  model:
+    primary: "claude-sonnet-4-20250514"
+    fallback: "claude-haiku-4-20250514"
+    # local: "llama3"       # Ollama model for offline fallback
+    # fast: "groq/llama-3.3-70b-versatile"  # Fast/cheap model for simple queries (enables intelligent routing)
+  max_turns: 25             # Max agentic tool-use turns per request
+  max_tokens: 8192          # Max response tokens
+  temperature: 0.7
+
+# ---------------------------------------------------------------------------
+# Providers — LLM API keys
+# ---------------------------------------------------------------------------
+providers:
+  anthropic:
+    api_key: ""             # Or set ANTHROPIC_API_KEY env var
+  # openai:
+  #   api_key: ""
+  # openrouter:
+  #   api_key: ""
+  ollama:
+    base_url: "http://localhost:11434"
+  # mistral:
+  #   api_key: ""             # Mistral AI API key
+  # azure_openai:
+  #   api_key: ""             # Azure OpenAI API key
+  #   base_url: ""            # e.g. https://my-resource.openai.azure.com/openai/deployments/my-deployment
+  # cerebras:
+  #   api_key: ""             # Cerebras API key (fast inference)
+  # together:
+  #   api_key: ""             # Together AI API key
+
+# ---------------------------------------------------------------------------
+# Channels — Where users interact with the assistant
+# Each channel is an independent way to reach the same agent.
+# Enable as many as you like — they all share the same brain.
+# ---------------------------------------------------------------------------
+channels:
+
+  # ── CLI ──────────────────────────────────────────────────────────────
+  # No setup needed. Run: crossklaw chat
+  cli:
+    enabled: true
+
+  # ── WebChat ──────────────────────────────────────────────────────────
+  # Browser-based chat UI. Run: crossklaw run, then open http://localhost:18801
+  webchat:
+    enabled: true
+    port: 18801
+
+  # ── Telegram ─────────────────────────────────────────────────────────
+  # Setup:
+  #   1. Open Telegram and message @BotFather (the verified one with blue tick)
+  #   2. Send /newbot and follow the prompts
+  #   3. Copy the token BotFather gives you and paste below
+  #   4. Run: crossklaw run
+  #   5. Message your bot in Telegram
+  telegram:
+    enabled: false
+    bot_token: ""             # Token from @BotFather (e.g. "123456789:ABCdef...")
+    # allowed_users: []       # Telegram user IDs to restrict access (empty = allow all)
+
+  # ── Discord ──────────────────────────────────────────────────────────
+  # Setup:
+  #   1. Go to https://discord.com/developers/applications
+  #   2. Click "New Application", name it, go to "Bot" tab
+  #   3. Click "Reset Token" and copy the token
+  #   4. Under "Privileged Gateway Intents", enable Message Content Intent
+  #   5. Go to OAuth2 > URL Generator, select "bot" scope + "Send Messages" permission
+  #   6. Open the generated URL to invite the bot to your server
+  #   7. Paste the token below and run: crossklaw run
+  discord:
+    enabled: false
+    bot_token: ""             # Bot token from Discord Developer Portal
+    # allowed_users: []       # Discord user IDs to restrict access (empty = allow all)
+
+  # ── Slack ────────────────────────────────────────────────────────────
+  # Setup:
+  #   1. Go to https://api.slack.com/apps and click "Create New App"
+  #   2. Choose "From scratch", name it, pick your workspace
+  #   3. Go to "OAuth & Permissions" > add scopes: chat:write, app_mentions:read, im:history
+  #   4. Install to workspace and copy the Bot User OAuth Token (xoxb-...)
+  #   5. Go to "Socket Mode" > enable it > generate an App-Level Token (xapp-...)
+  #   6. Go to "Event Subscriptions" > enable > subscribe to: message.im, app_mention
+  #   7. Paste both tokens below and run: crossklaw run
+  slack:
+    enabled: false
+    bot_token: ""             # Bot User OAuth Token (xoxb-...)
+    app_token: ""             # App-Level Token for Socket Mode (xapp-...)
+
+  # ── WhatsApp ─────────────────────────────────────────────────────────
+  # Setup:
+  #   1. On first run, CrossKlaw prints a QR code in the terminal
+  #   2. Open WhatsApp on your phone > Settings > Linked Devices > Link a Device
+  #   3. Scan the QR code — CrossKlaw is now linked to your WhatsApp
+  #   4. Message yourself or have others message the linked number
+  # Note: Uses whatsmeow (multi-device). Session persists in a SQLite DB.
+  whatsapp:
+    enabled: false
+    # db_path: ""             # Session DB path (default: ~/.crossklaw/whatsapp.db)
+    # allowed_users: []       # Phone numbers or JIDs to restrict access
+
+  # ── Matrix ───────────────────────────────────────────────────────────
+  # Setup:
+  #   1. Create a bot account on your Matrix homeserver (e.g. matrix.org)
+  #   2. Log in and get an access token (Settings > Help & About > Access Token)
+  #   3. Invite the bot to a room, or message it directly
+  matrix:
+    enabled: false
+    # homeserver: "https://matrix.org"
+    # user_id: "@crossklaw:matrix.org"
+    # access_token: ""        # Access token from Matrix client
+
+  # ── Signal ───────────────────────────────────────────────────────────
+  # Setup:
+  #   1. Install signal-cli: https://github.com/AsamK/signal-cli
+  #   2. Register a phone number: signal-cli -u +1234567890 register
+  #   3. Verify: signal-cli -u +1234567890 verify <code>
+  #   4. Set the phone number below and run: crossklaw run
+  signal:
+    enabled: false
+    # phone_number: "+1234567890"
+    # signal_cli_path: "signal-cli"  # Path to signal-cli binary (default: found via PATH)
+    # allowed_numbers: []            # Phone numbers to restrict access
+
+  # ── Email ────────────────────────────────────────────────────────────
+  # Setup:
+  #   1. Use an IMAP/SMTP email account (Gmail, Outlook, etc.)
+  #   2. For Gmail: enable 2FA, then create an App Password at
+  #      https://myaccount.google.com/apppasswords
+  #   3. Fill in the IMAP and SMTP details below
+  #   4. CrossKlaw polls for new emails and replies automatically
+  email:
+    enabled: false
+    imap_server: "imap.gmail.com:993"
+    imap_user: ""
+    imap_password: ""           # Use app-specific password for Gmail
+    smtp_server: "smtp.gmail.com:587"
+    smtp_user: ""               # Defaults to imap_user if empty
+    smtp_password: ""           # Defaults to imap_password if empty
+    poll_interval: 30           # seconds
+    allowed_from: []            # Email whitelist (empty = accept all)
+    folder: "INBOX"
+
+  # ── Microsoft Teams ──────────────────────────────────────────────────
+  # Setup:
+  #   1. Go to Azure Portal > Microsoft Entra ID > App Registrations > New
+  #   2. Note the Application (client) ID — that's your app_id
+  #   3. Go to Certificates & Secrets > New client secret — that's your app_password
+  #   4. Create an Azure Bot resource, set the App ID from step 2
+  #   5. Set messaging endpoint to: https://<your-host>/api/v1/teams
+  #   6. In the Bot resource > Channels > add Microsoft Teams
+  teams:
+    enabled: false
+    # app_id: ""              # Azure Bot App ID
+    # app_password: ""        # Azure Bot App Password/Secret
+
+  # ── Webhook ──────────────────────────────────────────────────────────
+  # Receives HTTP POST requests from external systems (GitHub, Stripe, etc.)
+  # Setup: Point your webhook URL to http://<host>:18802/webhook
+  webhook:
+    enabled: false
+    port: 18802
+    path: "/webhook"
+    # secret: ""              # HMAC-SHA256 secret for request validation
+    # rate_limit: 60          # Max requests per IP per minute (0 = unlimited)
+
+  # ── MQTT ─────────────────────────────────────────────────────────────
+  # For IoT devices and message brokers. Publishes and subscribes to MQTT topics.
+  # Setup: Point to your MQTT broker (Mosquitto, HiveMQ, etc.)
+  mqtt:
+    enabled: false
+    broker: "tcp://localhost:1883"
+    topic_prefix: "crossklaw"
+    # username: ""
+    # password: ""
+    # Inbox:  crossklaw/inbox/<user>
+    # Outbox: crossklaw/outbox/<user>
+
+# ---------------------------------------------------------------------------
+# Memory — Persistent conversation memory
+# ---------------------------------------------------------------------------
+memory:
+  enabled: true
+  db_path: ""               # Defaults to ~/.crossklaw/memory.db
+  summary_interval: 10      # Summarise every N messages
+  similarity_k: 5           # Top-K results for memory recall
+  threshold: 0.3            # Minimum cosine similarity score
+
+# ---------------------------------------------------------------------------
+# Security
+# ---------------------------------------------------------------------------
+security:
+  encrypt_config: false     # Encrypt sensitive values with AES-256-GCM
+  audit_log:
+    enabled: true           # Log all tool calls and security events
+    max_size_mb: 50
+  injection_detection:
+    enabled: true           # Scan inputs for prompt injection attempts
+    threshold: 0.8
+  skill_verification:
+    enabled: false          # Require Ed25519 signatures on skills
+    require_signatures: false
+
+# ---------------------------------------------------------------------------
+# Skills — Markdown-based agent capabilities
+# ---------------------------------------------------------------------------
+skills:
+  enabled: true
+  skill_dir: ""             # Defaults to ~/.crossklaw/skills
+  wasm:
+    enabled: false            # WASM skill sandbox (requires .wasm files in skill_dir)
+    # memory_limit_pages: 256 # Max memory in 64KB pages (default: 256 = 16MB)
+    # timeout_seconds: 30     # Execution timeout per skill invocation
+
+# ---------------------------------------------------------------------------
+# IoT Bridge — Smart home / hardware control
+# ---------------------------------------------------------------------------
+iot:
+  enabled: false
+  mqtt:
+    broker: "tcp://localhost:1883"
+    username: ""
+    password: ""
+    topic_prefix: "home"
+  homeassistant:
+    url: ""                 # e.g. http://homeassistant.local:8123
+    token: ""               # Long-lived access token
+  gpio:
+    chip: ""                # e.g. /dev/gpiochip0
+    pins: []                # e.g. [17, 27, 22]
+
+# ---------------------------------------------------------------------------
+# Voice — Audio transcription (Whisper) for voice messages
+# ---------------------------------------------------------------------------
+voice:
+  enabled: false
+  # api_key: ""              # Whisper API key (defaults to Groq key / GROQ_API_KEY)
+  # base_url: ""             # Default: Groq Whisper endpoint
+  # model: "whisper-large-v3-turbo"
+
+# ---------------------------------------------------------------------------
+# Auth — API key authentication for the gateway
+# ---------------------------------------------------------------------------
+auth:
+  enabled: false              # When false, gateway runs in self-hosted mode (no auth)
+  # db_path: ""              # Defaults to ~/.crossklaw/auth.db
+  # Manage keys with: crossklaw auth create/revoke/list
+
+# ---------------------------------------------------------------------------
+# Dashboard — Embedded web monitoring dashboard
+# ---------------------------------------------------------------------------
+dashboard:
+  enabled: true               # Serves at /dashboard on the gateway port
+
+# ---------------------------------------------------------------------------
+# MCP — Model Context Protocol external tool servers
+# ---------------------------------------------------------------------------
+mcp:
+  servers: []
+  # Example MCP servers (CrossKlaw as MCP client):
+  # servers:
+  #   - name: github
+  #     command: npx
+  #     args: ["-y", "@modelcontextprotocol/server-github"]
+  #     env:
+  #       GITHUB_PERSONAL_ACCESS_TOKEN: "ghp_..."
+  #     enabled: true
+  #   - name: filesystem
+  #     command: npx
+  #     args: ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+  #     enabled: true
+
+  # MCP server mode — expose CrossKlaw as MCP tools for external agents.
+  # When enabled, other tools (Claude Desktop, Cursor, etc.) can use
+  # CrossKlaw's chat, scan, and sanitise capabilities via MCP.
+  # Endpoint: http://<host>:<port>/mcp
+  expose:
+    enabled: false
+
+# ---------------------------------------------------------------------------
+# Documents — RAG document indexing
+# ---------------------------------------------------------------------------
+documents:
+  enabled: false
+  # dir: ""                  # Defaults to ~/.crossklaw/documents/
+  chunk_size: 1000           # Characters per chunk
+  chunk_overlap: 200         # Overlap between chunks
+  max_file_size_kb: 1024     # Max 1MB per file (.txt, .md, .csv, .json, .yaml, .log)
+
+# ---------------------------------------------------------------------------
+# Scheduler — Cron jobs and heartbeat
+# ---------------------------------------------------------------------------
+scheduler:
+  max_jobs: 20
+  heartbeat:
+    enabled: false
+    interval: "30m"         # How often the agent self-checks
+    prompt: "Quick status check — anything I should know about?"
+
+# ---------------------------------------------------------------------------
+# A2A — Agent-to-Agent protocol (Google A2A v1.0)
+# ---------------------------------------------------------------------------
+# When enabled, CrossKlaw serves an Agent Card at /.well-known/agent-card.json
+# and accepts task delegations from other A2A-compatible agents at /a2a.
+a2a:
+  enabled: false
+  description: ""           # Optional: override agent description in the Agent Card
+                            # (defaults to agent.identity if empty)
