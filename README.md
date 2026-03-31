@@ -1,5 +1,9 @@
 # CrossKlaw
 
+**One binary. Every channel. Your data.**
+
+[![Watch the demo](https://img.shields.io/badge/Demo-Watch%20on%20YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/M2aZd5-E32A)
+
 An agentic AI platform that runs as a single Go binary. Secure by default, useful offline, hardware-aware.
 
 CrossKlaw connects to 14 communication channels, orchestrates 11 LLM providers with intelligent routing and failover, controls IoT devices, and participates in multi-agent ecosystems via A2A and MCP — all from a ~46 MB self-contained binary with zero external dependencies. Runs on a Raspberry Pi.
