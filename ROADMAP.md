@@ -15,22 +15,23 @@
 - [x] Interactive setup wizard
 - [x] Plaintext API key warning
 
-## v0.2.0 (release)
-- [ ] Embed logo in TUI startup
-- [ ] GoReleaser for multi-platform binaries
-- [ ] README that sells (hero image, feature grid, quickstart, comparison table)
-- [ ] LICENSE file (free personal, commercial requires license)
-- [ ] CHANGELOG for v0.2.0
+## v0.2.0 (release — shipped as v0.2.0-beta)
+- [x] LICENSE file (free personal, commercial requires license)
+- [x] CHANGELOG for v0.2.0
+- [x] README (live, feature grid, quickstart)
+- [ ] Embed logo in TUI startup (nice-to-have)
+- [ ] GoReleaser for multi-platform binaries (nice-to-have — manual build works)
+- [ ] README polish: feature comparison table, better hero section
 
 ## v0.3.0 (planned)
-- [ ] Interactive channel management (`crossklaw channel enable telegram` prompts for token)
-- [ ] Voice output / text-to-speech (browser speechSynthesis + optional API TTS)
-- [ ] OpenTelemetry trace export (spans per tool call, LLM call, skill invocation)
-- [ ] Skill registry with `crossklaw skill install` (signed, community skills)
-- [ ] OpenClaw skill compatibility (import OpenClaw SKILL.md format)
-- [ ] Built-in eval/regression harness (`crossklaw eval`)
-- [ ] Human-in-the-loop approval workflows (pause on high-stakes actions)
-- [ ] Provider cost/latency dashboard (makes intelligent routing visible)
+- [x] Interactive channel management (`crossklaw channel list/enable/disable` with guided prompts)
+- [x] Voice output / text-to-speech (browser speechSynthesis + optional API TTS)
+- [x] OpenTelemetry trace export (spans per tool call, LLM call, skill invocation)
+- [x] Skill registry with `crossklaw skill install` (signed, community skills)
+- [x] OpenClaw skill compatibility (import OpenClaw SKILL.md format)
+- [x] Built-in eval/regression harness (`crossklaw eval`)
+- [x] Human-in-the-loop approval workflows (pause on high-stakes actions)
+- [x] Provider cost/latency dashboard (makes intelligent routing visible)
 
 ## v0.4.0 (planned)
 - [ ] More channels: Google Chat, Mattermost, Rocket.Chat, LINE, SMS/Twilio, IRC

@@ -1,27 +1,12 @@
-<p align="center">
-  <img src="docs/Graphics/Klawlogo.png" alt="CrossKlaw" width="200">
-</p>
-
-<h1 align="center">CrossKlaw</h1>
-
-<p align="center"><strong>One binary. Every channel. Your data.</strong></p>
-
-<p align="center">
-  <a href="https://youtu.be/M2aZd5-E32A"><img src="https://img.shields.io/badge/Demo-Watch%20on%20YouTube-red?style=for-the-badge&logo=youtube" alt="Watch the demo"></a>
-  <a href="https://github.com/cross-klaw/crossklaw/releases"><img src="https://img.shields.io/badge/Download-v0.2.0--beta-blue?style=for-the-badge" alt="Download"></a>
-</p>
+# CrossKlaw
 
 An agentic AI platform that runs as a single Go binary. Secure by default, useful offline, hardware-aware.
 
-CrossKlaw connects to 14 communication channels, orchestrates 11 LLM providers with intelligent routing and failover, controls IoT devices, and participates in multi-agent ecosystems via A2A and MCP — all from a ~46 MB self-contained binary with zero external dependencies. Runs on a Raspberry Pi.
-
-<p align="center">
-  <img src="Screenshots/dashboard.png" alt="CrossKlaw Dashboard" width="700">
-</p>
+CrossKlaw connects to 14 communication channels, orchestrates 11 LLM providers with intelligent routing and failover, controls IoT devices, and participates in multi-agent ecosystems via A2A and MCP — all from a ~50 MB self-contained binary with zero external dependencies. Runs on a Raspberry Pi.
 
 ## Features
 
-- **Single binary, zero dependencies** — pure Go with embedded SQLite, no CGO required, 46MB
+- **Single binary, zero dependencies** — pure Go with embedded SQLite, no CGO required, ~50MB
 - **14 channels** — Telegram, Discord, Slack, WhatsApp, Signal, Matrix, Email, WebChat, MQTT, Webhook, CLI, TUI, Dashboard, Microsoft Teams
 - **11 LLM providers** — Anthropic, OpenAI, Gemini, DeepSeek, Groq, OpenRouter, Ollama, Mistral, Azure OpenAI, Cerebras, Together AI
 - **Intelligent model routing** — routes simple queries to fast/cheap models, complex reasoning to powerful ones, with automatic failover
@@ -30,6 +15,13 @@ CrossKlaw connects to 14 communication channels, orchestrates 11 LLM providers w
 - **WASM skill sandboxing** — execute untrusted skills in a WebAssembly sandbox (wazero, zero CGO) with memory limits, timeouts, and no filesystem/network access
 - **Multi-agent delegation** — spawn sub-agents with per-role tool restrictions, injection detection on worker I/O, and full audit trail
 - **Voice input** — Whisper transcription on dashboard, webchat, Telegram, Discord, Slack, and WhatsApp; microphone button in web UIs
+- **Voice output / TTS** — browser speechSynthesis (free) or OpenAI API TTS; speaker toggle in dashboard
+- **Human-in-the-loop approval** — configurable high-stake tools pause and ask the user for confirmation via their channel before executing
+- **OpenTelemetry tracing** — native OTLP export; spans for every LLM call, tool execution, and skill invocation; compatible with Jaeger, Grafana Tempo, Datadog, Honeycomb
+- **Provider cost/latency dashboard** — per-provider metrics with avg/p95 latency, token counts, cost estimates, success rates, fallback tracking
+- **Eval/regression harness** — `crossklaw eval` runs test suites against the agent with keyword, regex, and length assertions
+- **Interactive channel management** — `crossklaw channel enable telegram` guides you through setup with step-by-step prompts
+- **OpenClaw compatibility** — auto-detects and adapts OpenClaw SKILL.md format with 20+ tool name mappings
 - **Prompt injection defence** — 20+ weighted patterns, base64 scanning, structural analysis; applied on every channel including A2A
 - **Config encryption** — AES-256-GCM with Argon2id key derivation; `crossklaw config encrypt` to protect API keys at rest
 - **Audit logging** — every tool call, injection attempt, A2A task, and permission decision is logged
@@ -44,10 +36,6 @@ CrossKlaw connects to 14 communication channels, orchestrates 11 LLM providers w
 - **Cross-platform** — Linux (amd64/arm64), macOS (amd64/arm64), Windows (amd64)
 
 ## Quick Start
-
-<p align="center">
-  <img src="Screenshots/setup.png" alt="CrossKlaw Setup Wizard" width="700">
-</p>
 
 ### Download and Run
 
@@ -139,10 +127,6 @@ make build-all
 
 ## CLI Commands
 
-<p align="center">
-  <img src="Screenshots/chat.png" alt="CrossKlaw TUI Chat" width="700">
-</p>
-
 | Command | Description |
 |---|---|
 | `crossklaw setup` | Interactive setup wizard — get running in 2 minutes |
@@ -155,6 +139,11 @@ make build-all
 | `crossklaw config encrypt` | Encrypt API keys in config with AES-256-GCM |
 | `crossklaw version` | Print version, commit hash, and build date |
 | `crossklaw skills list` | List installed skills with signature status |
+| `crossklaw skills install owner/repo` | Install a skill from GitHub |
+| `crossklaw channel list` | List all channels with enabled/disabled status |
+| `crossklaw channel enable <name>` | Interactive guided channel setup |
+| `crossklaw channel disable <name>` | Disable a channel |
+| `crossklaw eval <suite.yaml>` | Run eval/regression test suite against the agent |
 | `crossklaw keys generate` | Generate Ed25519 keypair for skill signing |
 | `crossklaw memory search "query"` | Search persistent memory |
 
@@ -387,10 +376,6 @@ crossklaw keys generate
 
 ## Security
 
-<p align="center">
-  <img src="Screenshots/security-approval.png" alt="CrossKlaw Security Approval" width="700">
-</p>
-
 CrossKlaw is pen tested against 22 automated security checks across 9 attack categories: prompt injection (including base64 and A2A vectors), request size attacks, authentication bypass, path traversal, information disclosure, method fuzzing, rate limiting, webhook injection, and MCP server abuse. Run the tests yourself: `bash tests/pentest.sh`
 
 ### Prompt Injection Detection
@@ -574,6 +559,78 @@ voice:
 
 Both approaches use the same OpenAI-compatible `/audio/transcriptions` endpoint, so any compatible server works.
 
+## Voice Output (TTS)
+
+CrossKlaw can speak assistant responses aloud. Two modes are available:
+
+**Browser TTS (free, zero config)** — toggle the 🔇 button in the dashboard chat to enable. Uses your browser's built-in speechSynthesis. Works immediately, no API key needed.
+
+**OpenAI API TTS (natural-sounding)** — for production-quality voice:
+
+```yaml
+voice:
+  tts:
+    enabled: true
+    provider: "openai"
+    api_key: "sk-..."           # or falls back to providers.openai.api_key
+    voice: "nova"               # alloy, echo, fable, nova, onyx, shimmer
+```
+
+## OpenTelemetry Tracing
+
+CrossKlaw exports OpenTelemetry-native traces — the industry standard used by Google, Microsoft, and AWS. Every LLM call, tool execution, and skill invocation is traced with full span hierarchy.
+
+```yaml
+telemetry:
+  enabled: true
+  otlp_endpoint: "localhost:4318"    # Jaeger, Grafana Tempo, Datadog, etc.
+  service_name: "crossklaw"
+```
+
+Spans include: provider name, model, token counts, latency, success/failure, and parent-child relationships. View recent traces in the dashboard at `/api/traces`.
+
+## Human-in-the-Loop Approval
+
+For production deployments, configure high-stake tools to pause and ask the user for confirmation before executing:
+
+```yaml
+approval:
+  enabled: true
+  timeout_seconds: 120
+  high_stake_tools:
+    - shell
+    - write_file
+    - http_post
+```
+
+When the agent tries to execute a high-stake tool, it sends the user a message on their channel (Telegram, Discord, Slack, etc.) asking them to reply YES or NO. Auto-denied after the timeout.
+
+## Eval / Regression Testing
+
+Run test suites against the agent to verify behaviour hasn't regressed:
+
+```bash
+crossklaw eval evals/basic.yaml
+```
+
+Eval suites are YAML files with test cases:
+
+```yaml
+name: basic
+cases:
+  - name: greeting
+    prompt: "Hello"
+    expect:
+      non_empty: true
+      not_contains: ["error"]
+  - name: math
+    prompt: "What is 2+2?"
+    expect:
+      contains_any: ["4", "four"]
+```
+
+Assertions: `contains_any`, `contains_all`, `not_contains`, `matches_regex`, `min_length`, `max_length`, `non_empty`.
+
 ## Docker
 
 ### Build and Run
@@ -632,14 +689,16 @@ internal/
     mqtt/                  MQTT pub/sub channel
   config/                YAML config loading, validation, env overrides
   doctor/                Diagnostic self-checks
+  eval/                  Eval/regression harness
   gateway/               HTTP + WebSocket API server
-  inference/             LLM provider interface + Anthropic adapter
+  inference/             LLM provider interface, metrics, TTS
   iot/                   IoT bridge (MQTT, Home Assistant, GPIO)
   memory/                SQLite store, embeddings, vector search
   scheduler/             Cron job engine + heartbeat
   security/              Injection detection, sanitisation, crypto, audit
-  skills/                Skill parser, manager, Ed25519 verifier
-  tools/                 Tool interface, registry, executor, policy
+  skills/                Skill parser, manager, Ed25519 verifier, OpenClaw compat
+  telemetry/             OpenTelemetry tracing (OTLP export)
+  tools/                 Tool interface, registry, executor, policy, approval
     builtin/               Shell, filesystem, HTTP tools
 pkg/
   protocol/              Shared message types

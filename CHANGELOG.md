@@ -1,5 +1,38 @@
 # Changelog
 
+## v0.3.0 — 2026-04-11
+
+### Highlights
+- **Interactive channel management** — `crossklaw channel list/enable/disable` with guided setup prompts per channel
+- **OpenTelemetry tracing** — native OTLP export with spans for every LLM call, tool execution, and skill invocation; compatible with Jaeger, Grafana Tempo, Datadog, Honeycomb, AWS X-Ray
+- **Human-in-the-loop approval** — configurable high-stake tools pause and ask the user for confirmation via their messaging channel before executing; timeout with auto-deny
+- **Provider cost/latency dashboard** — per-provider metrics with avg/p95 latency, token counts, cost estimates, success rates, and fallback tracking
+- **Voice output / TTS** — browser speechSynthesis (free, zero config) + optional OpenAI API TTS for natural-sounding voice; speaker toggle in dashboard
+- **Eval/regression harness** — `crossklaw eval suite.yaml` runs test cases against the agent with keyword, regex, and length assertions
+- **OpenClaw skill compatibility** — auto-detects and adapts OpenClaw SKILL.md format with 20+ tool name mappings
+- **Skill registry** — `crossklaw skill install owner/repo` installs skills from GitHub with content security scanning
+
+### New CLI Commands
+- `crossklaw channel list` — show all channels with enabled/disabled status
+- `crossklaw channel enable <name>` — interactive guided setup for a channel
+- `crossklaw channel disable <name>` — disable a channel and save config
+- `crossklaw eval <suite.yaml>` — run eval/regression test suite
+
+### New Config Sections
+- `approval` — human-in-the-loop tool approval (enabled, high_stake_tools, timeout_seconds)
+- `telemetry` — OpenTelemetry tracing (enabled, otlp_endpoint, service_name)
+- `voice.tts` — text-to-speech output (enabled, provider, api_key, model, voice)
+
+### New Dashboard Endpoints
+- `GET /api/provider-metrics` — per-provider cost/latency aggregation
+- `GET /api/traces` — recent OpenTelemetry span history
+- `POST /api/voice/synthesize` — text-to-speech audio generation
+
+### Security
+- Human-in-the-loop approval works across all messaging channels (Telegram, Discord, Slack, Matrix, Email, Teams)
+- Approval responses intercepted before reaching the agent
+- High-stake tool list is configurable per deployment
+
 ## v0.2.0-beta — 2026-03-27
 
 ### Highlights

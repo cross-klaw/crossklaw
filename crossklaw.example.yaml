@@ -255,6 +255,14 @@ voice:
   # base_url: ""             # Default: Groq Whisper endpoint
   # model: "whisper-large-v3-turbo"
 
+  # Text-to-speech output — speak assistant responses aloud
+  tts:
+    enabled: false
+    provider: "browser"       # "browser" (free, uses speechSynthesis) or "openai" (higher quality)
+    # api_key: ""             # API key for cloud TTS (defaults to OpenAI key)
+    # model: "tts-1"          # OpenAI TTS model (tts-1 or tts-1-hd)
+    # voice: "alloy"          # Voice: alloy, echo, fable, onyx, nova, shimmer
+
 # ---------------------------------------------------------------------------
 # Auth — API key authentication for the gateway
 # ---------------------------------------------------------------------------
@@ -319,6 +327,27 @@ scheduler:
 # ---------------------------------------------------------------------------
 # When enabled, CrossKlaw serves an Agent Card at /.well-known/agent-card.json
 # and accepts task delegations from other A2A-compatible agents at /a2a.
+# ── OpenTelemetry Tracing ────────────────────────────────────────────
+# Export spans for every LLM call, tool execution, and skill invocation.
+# Compatible with Jaeger, Grafana Tempo, Datadog, Honeycomb, AWS X-Ray.
+telemetry:
+  enabled: false
+  otlp_endpoint: "localhost:4318"   # OTLP HTTP endpoint (no scheme — HTTP assumed)
+  service_name: "crossklaw"         # Service name in traces
+
+# ── Human-in-the-Loop Approval ───────────────────────────────────────
+# When enabled, high-stake tool calls in gateway mode (Telegram, Discord, etc.)
+# pause and ask the user for confirmation before executing.
+approval:
+  enabled: false
+  timeout_seconds: 120      # How long to wait for YES/NO before auto-denying
+  # high_stake_tools:       # Tools that ALWAYS require approval (even if policy says Allow)
+  #   - shell
+  #   - write_file
+  #   - edit_file
+  #   - http_post
+  #   - delegate
+
 a2a:
   enabled: false
   description: ""           # Optional: override agent description in the Agent Card

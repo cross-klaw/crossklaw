@@ -55,13 +55,29 @@ Then run:
 
 Open http://localhost:18800/dashboard/ in your browser.
 
-## 5. Health check
+## 5. Enable more channels
+
+```bash
+./crossklaw channel list              # see what's available
+./crossklaw channel enable telegram   # guided setup
+./crossklaw channel enable discord    # guided setup
+```
+
+## 6. Health check
 
 ```bash
 ./crossklaw doctor
 ```
 
 Shows all providers, channels, and system status.
+
+## 7. Run eval tests
+
+```bash
+./crossklaw eval evals/basic.yaml
+```
+
+Verifies the agent responds correctly to a suite of test cases.
 
 ## Need help?
 
